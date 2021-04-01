@@ -7,7 +7,6 @@ Public Class BDConexion
     Public Function Conectar() As SqlConnection
         ConexionSQL = New SqlConnection("Data source=DESKTOP-7GVHR1M\SQLEXPRESS;Initial Catalog=Banco_Sena;integrated security=true")
         Return ConexionSQL
-
     End Function
 
 

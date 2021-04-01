@@ -65,8 +65,10 @@
   <ItemGroup>
     <Compile Include="BDConexion.vb" />
     <Compile Include="CD_administrador.vb" />
+    <Compile Include="CD_cliente.vb" />
     <Compile Include="CD_configuracion.vb" />
     <Compile Include="CD_logueo.vb" />
+    <Compile Include="CD_mora.vb" />
     <Compile Include="CD_prestamos.vb" />
     <Compile Include="CD_reservas.vb" />
     <Compile Include="CD_tipoDocumento.vb" />

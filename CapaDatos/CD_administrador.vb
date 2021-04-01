@@ -46,6 +46,7 @@ Public Class CD_administrador
                 .Add("@estado", SqlDbType.VarChar).Value = datos(9)
                 .Add("@tipo_admin", SqlDbType.VarChar).Value = datos(10)
             End With
+
             conexion.Open()
             dataAdapter.SelectCommand.ExecuteNonQuery()
             conexion.Close()

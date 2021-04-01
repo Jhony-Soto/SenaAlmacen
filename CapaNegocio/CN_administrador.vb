@@ -1,8 +1,8 @@
 ﻿Imports CapaDatos
 
+
 Public Class CN_administrador
     Dim objAdmin_CD As New CD_administrador
-
 
     'valida si ya hay un administrdor en la BD
     Public Function validateAadmin() As Boolean

@@ -1,11 +1,10 @@
 ﻿Imports CapaDatos
 Public Class CN_dashboard
     Private objeConfig_CD As New CD_configuracion
-
+    Private objPrestamo_CD As New CD_prestamos
     Private arreglo As Array
 
     Public Function getFechaBackup() As DataTable
-
         Return objeConfig_CD.getAll().Tables(0)
     End Function
 
@@ -106,6 +105,60 @@ Public Class CN_dashboard
         'Actualizmos la fecha y el estado de la copia con la fecha actual
         arreglo = {Date.Now.Date, 1}
         objeConfig_CD.updateStateBackup(arreglo)
+
+    End Sub
+
+    'Consulta los registros de hace 3 años
+    Public Function getRegister3Years() As DataSet
+        Dim objeCliente_CD As New CD_cliente
+        Return objeCliente_CD.getClientesXfecha(Date.Now.AddYears(-3).ToString("yyyy/MM/dd"))
+    End Function
+
+    Public Sub deleteRegister(ByVal datos As DataSet)
+        Dim Matriz_clientes(0, 0) As Object
+        Dim tablaClientes = datos.Tables(0)
+
+        'Esta matriz contendra todos la informacionde los aprendices
+        ReDim Matriz_clientes(tablaClientes.Rows.Count - 1, 6)
+        For i = 0 To tablaClientes.Rows.Count - 1
+            For j = 0 To 6
+                Matriz_clientes(i, j) = tablaClientes(i)(j)
+            Next
+        Next
+
+        For i = 0 To tablaClientes.Rows.Count - 1
+            ''RELIAMOS LA BUSQUEDA Y ELIMINACION DE LOS PRESTAMOS  DEL APRENDIZ
+            Dim prestamosCliente = objPrestamo_CD.prestamoXcliente(Matriz_clientes(i, 0))
+
+            'Si tiene prestamos ,eliminamos el detalle del prestamos
+            If prestamosCliente.Rows.Count > 0 Then
+                'Se elimina del detalle de los prestamos
+                For j = 0 To prestamosCliente.Rows.Count - 1
+                    objPrestamo_CD.deletePrestamosXcliente(prestamosCliente(j)(0))
+                Next
+            End If
+
+            '****************************************************************************************************************
+
+            'RELIZAMOS LA BUSQUEDA Y ELIMINACION DE LAS MORAS DEL APRENDIZ
+            Dim objMora_CD As New CD_mora
+            Dim idMorasCliente = objMora_CD.getIdsMorasXcliente(Matriz_clientes(i, 0))
+
+
+            If idMorasCliente.Rows.Count > 0 Then
+                'Si tiene elementos en mora los eeliminamos 
+                For j = 0 To idMorasCliente.Rows.Count - 1
+                    Select_1ParametroInt("sp_tbl_mora_elemento_delete_definitivo", idMorasCliente(j)(0))
+                Next
+
+                'Eliminamos la mora
+                Select_1ParametroInt("sp_tbl_mora_delete_definitivo", Matriz_clientes(i, 0))
+
+            End If
+            'Eliminamos el apraniz definitivamente
+            Select_1ParametroInt("sp_tbl_cliente_delete_definitivo", Matriz_clientes(i, 0))
+        Next
+
 
     End Sub
 End Class

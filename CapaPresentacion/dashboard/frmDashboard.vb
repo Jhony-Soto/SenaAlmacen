@@ -149,19 +149,17 @@ Public Class frmDashBoard
         'Esta funcion reliza un busqueda de aprendices que tengan estado 0 y que su registro se halla echo de 3 años atras
         'para eliminarlos y refrscar la bse de datos ,estos aprendices no tienen ningun tipo de deuda con el banco ,tambien se descargara un reporte con los aprenices que se eliminaron
         'asi poder revisar si se desea.
+        Dim datos = objDashboard_CN.getRegister3Years()
 
-        datos = Select_1ParametroInt("ps_tbl_clientes_eliminar_datos", Date.Now.AddYears(-3).ToString("yyyy/MM/dd"))
-        tabla = New DataTable
-        tabla = datos.tables("datos")
-
-
-
+        Dim tabla = datos.Tables(0)
         'Si hay aprendices ,cargamos el datagrid parar exportarlo como excel
         If tabla.Rows.Count > 0 Then
 
             'Cragamos el datagrid con los aprendices eliminados
             dgexportar.DataSource = datos
             dgexportar.DataMember = "datos"
+
+            objDashboard_CN.deleteRegister(datos)
 
             'Esta matriz contendra todos la informacionde los aprendices
             ReDim Matriz_clientes(tabla.Rows.Count - 1, 6)
